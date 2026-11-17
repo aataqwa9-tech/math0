@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathVerse SMA — Belajar Matematika & Tanya AI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Kustomisasi Scrollbar & Animasi Halus */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Indikator mengetik untuk AI */
+        .typing-dot {
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-700">
+
+    <!-- Wrapper Utama Aplikasi -->
+    <div class="min-h-screen flex flex-col lg:flex-row">
+
+        <!-- Header Mobile (Hanya tampil di layar kecil) -->
+        <header class="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200">
+                    <i class="fa-solid fa-square-root-variable"></i>
+                </div>
+                <span class="font-display font-bold text-lg bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">MathVerse SMA</span>
+            </div>
+            <button id="mobile-menu-btn" onclick="toggleSidebar()" class="p-2.5 rounded-xl text-slate-600 hover:bg-slate-100 focus:outline-none">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </header>
+
+        <!-- Overlay Gelap Mobile saat Sidebar Terbuka -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-30 hidden lg:hidden transition-opacity"></div>
+
+        <!-- Sidebar Navigasi -->
+        <aside id="sidebar" class="fixed lg:sticky top-0 left-0 z-40 h-screen w-72 bg-white border-r border-slate-200 flex flex-col justify-between transition-transform duration-300 -translate-x-full lg:translate-x-0">
+            <div>
+                <!-- Logo Brand Desktop -->
+                <div class="p-6 flex items-center justify-between border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 via-blue-600 to-purple-600 flex items-center justify-center text-white text-lg shadow-lg shadow-indigo-200">
+                            <i class="fa-solid fa-square-root-variable"></i>
+                        </div>
+                        <div>
+                            <h1 class="font-display font-extrabold text-xl tracking-tight text-slate-900">MathVerse</h1>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600">Edisi SMA</span>
+                        </div>
+                    </div>
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-400 hover:text-slate-600">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Menu Navigasi -->
+                <nav class="p-4 space-y-1.5">
+                    <p class="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Menu Utama</p>
+                    
+                    <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all bg-indigo-50 text-indigo-700">
+                        <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                        <span>Dashboard Belajar</span>
+                    </button>
+
+                    <button onclick="navigateTo('materi')" id="nav-materi" class="nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                        <i class="fa-solid fa-book-open w-5 text-center"></i>
+                        <span>Materi Pelajaran</span>
+                    </button>
+
+                    <button onclick="navigateTo('kuis')" id="nav-kuis" class="nav-item w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                        <i class="fa-solid fa-pen-to-square w-5 text-center"></i>
+                        <span>Latihan & Kuis</span>
+                    </button>
+
+                    <button onclick="navigateTo('tanya-ai')" id="nav-tanya-ai" class="nav-item w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+                        <div class="flex items-center gap-3.5">
+                            <i class="fa-solid fa-robot w-5 text-center text-purple-600"></i>
+                            <span>Tanya AI Tutor</span>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xs">Smart</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Kartu Info Bawah Sidebar -->
+            <div class="p-4 m-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 text-white shadow-lg shadow-indigo-200">
+                <div class="flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-sparkles text-amber-300"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-100">Butuh Bantuan PR?</span>
+                </div>
+                <p class="text-xs text-indigo-100 leading-relaxed mb-3">
+                    Ketik persamaan kuadrat, turunan, atau soal matematika SMA di Tanya AI untuk solusi langkah demi langkah!
+                </p>
+                <button onclick="navigateTo('tanya-ai')" class="w-full py-2 px-3 bg-white text-indigo-700 hover:bg-indigo-50 rounded-xl text-xs font-bold transition shadow-xs">
+                    Mulai Tanya AI <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Konten Utama -->
+        <main class="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+
+            <!-- ========================================== -->
+            <!-- HALAMAN 1: DASHBOARD BELAJAR               -->
+            <!-- ========================================== -->
+            <section id="page-dashboard" class="page-section fade-in space-y-6">
+                <!-- Banner Selamat Datang -->
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-700 p-6 sm:p-8 text-white shadow-xl shadow-indigo-100">
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-xs font-semibold mb-4">
+                            <i class="fa-solid fa-graduation-cap"></i> Kurikulum Merdeka & K-13 SMA
+                        </span>
+                        <h2 class="font-display text-2xl sm:text-3xl font-extrabold mb-2 leading-tight">
+                            Taklukkan Matematika SMA dengan Lebih Mudah & Menyenangkan!
+                        </h2>
+                        <p class="text-indigo-100 text-sm sm:text-base mb-6 leading-relaxed">
+                            Pelajari ringkasan rumus kelas 10–12, uji kemampuanmu lewat kuis interaktif, atau tanyakan soal sulit langsung ke AI Tutor pribadi.
+                        </p>
+                        <div class="flex flex-wrap gap-3">
+                            <button onclick="navigateTo('tanya-ai')" class="px-5 py-2.5 bg-white text-indigo-700 hover:bg-indigo-50 font-bold text-sm rounded-xl shadow-md transition flex items-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> Tanya AI Sekarang
+                            </button>
+                            <button onclick="navigateTo('materi')" class="px-5 py-2.5 bg-indigo-500/40 hover:bg-indigo-500/60 border border-white/25 text-white font-semibold text-sm rounded-xl transition">
+                                Jelajahi Materi
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Dekorasi Simbol Matematika Latar -->
+                    <div class="hidden md:flex absolute right-8 top-1/2 -translate-y-1/2 text-white/10 text-8xl font-display font-black select-none pointer-events-none gap-4">
+                        <span>∫</span><span>∑</span><span>π</span>
+                    </div>
+                </div>
+
+                <!-- Statistik Progres Belajar -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0">
+                            <i class="fa-solid fa-book-bookmark"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-slate-500">Materi Dibaca</p>
+                            <p class="text-2xl font-display font-bold text-slate-900"><span id="stat-materi-count">2</span> <span class="text-xs font-normal text-slate-400">/ 5 Modul</span></p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl shrink-0">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-slate-500">Rata-rata Skor Kuis</p>
+                            <p class="text-2xl font-display font-bold text-slate-900" id="stat-quiz-score">85%</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
+                            <i class="fa-solid fa-check-double"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-slate-500">Kuis Selesai</p>
+                            <p class="text-2xl font-display font-bold text-slate-900" id="stat-quiz-done">1</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-medium text-slate-500">Pertanyaan ke AI</p>
+                            <p class="text-2xl font-display font-bold text-slate-900" id="stat-ai-asked">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid Akses Cepat & Rekomendasi Topik -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Kolom Kiri: Rekomendasi Topik Populer -->
+                    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
+                        <div class="flex items-center justify-between mb-5">
+                            <div>
+                                <h3 class="font-display font-bold text-lg text-slate-900">Topik Utama Matematika SMA</h3>
+                                <p class="text-xs text-slate-500">Pilih materi untuk langsung melihat rangkuman rumus & contoh soal</p>
+                            </div>
+                            <button onclick="navigateTo('materi')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                                Lihat Semua <i class="fa-solid fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div onclick="openSpecificMateri('aljabar')" class="cursor-pointer group p-4 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40 transition flex items-start gap-3.5">
+                                <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition">
+                                    x²
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">Kelas 10</span>
+                                    <h4 class="font-bold text-sm text-slate-900 mt-1">Persamaan & Fungsi Kuadrat</h4>
+                                    <p class="text-xs text-slate-500 mt-0.5">Pemfaktoran, Rumus ABC, Diskriminan & Grafik</p>
+                                </div>
+                            </div>
+
+                            <div onclick="openSpecificMateri('trigonometri')" class="cursor-pointer group p-4 rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50/40 transition flex items-start gap-3.5">
+                                <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition">
+                                    sin θ
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md">Kelas 10 & 11</span>
+                                    <h4 class="font-bold text-sm text-slate-900 mt-1">Trigonometri Dasar & Identitas</h4>
+                                    <p class="text-xs text-slate-500 mt-0.5">Sudut istimewa, Aturan Sinus & Cosinus</p>
+                                </div>
+                            </div>
+
+                            <div onclick="openSpecificMateri('deret')" class="cursor-pointer group p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/40 transition flex items-start gap-3.5">
+                                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition">
+                                    ∑ Un
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">Kelas 11</span>
+                                    <h4 class="font-bold text-sm text-slate-900 mt-1">Barisan & Deret</h4>
+                                    <p class="text-xs text-slate-500 mt-0.5">Aritmatika, Geometri & Deret Tak Hingga</p>
+                                </div>
+                            </div>
+
+                            <div onclick="openSpecificMateri('kalkulus')" class="cursor-pointer group p-4 rounded-xl border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/40 transition flex items-start gap-3.5">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition">
+                                    dy/dx
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Kelas 11 & 12</span>
+                                    <h4 class="font-bold text-sm text-slate-900 mt-1">Kalkulus: Limit & Turunan</h4>
+                                    <p class="text-xs text-slate-500 mt-0.5">Turunan fungsi aljabar & nilai stasioner</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kolom Kanan: Uji Kemampuan Cepat -->
+                    <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs flex flex-col justify-between">
+                        <div>
+                            <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center text-lg mb-4 shadow-md shadow-amber-100">
+                                <i class="fa-solid fa-bolt"></i>
+                            </div>
+                            <h3 class="font-display font-bold text-lg text-slate-900 mb-1">Tantangan Kuis Harian</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                                Siap menguji pemahaman rumusmu? Kerjakan latihan soal pilihan ganda lengkap dengan pembahasan detail di setiap nomor.
+                            </p>
+                            <div class="space-y-2 mb-5">
+                                <div class="flex items-center justify-between text-xs p-2.5 rounded-xl bg-slate-50">
+                                    <span class="font-medium text-slate-700"><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>Kuis Aljabar & Kuadrat</span>
+                                    <span class="text-slate-400">5 Soal</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs p-2.5 rounded-xl bg-slate-50">
+                                    <span class="font-medium text-slate-700"><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>Kuis Trigonometri</span>
+                                    <span class="text-slate-400">5 Soal</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs p-2.5 rounded-xl bg-slate-50">
+                                    <span class="font-medium text-slate-700"><i class="fa-solid fa-circle-check text-emerald-500 mr-2"></i>Kuis Turunan & Deret</span>
+                                    <span class="text-slate-400">5 Soal</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="navigateTo('kuis')" class="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-indigo-600 text-white font-bold text-sm transition shadow-sm">
+                            Mulai Latihan Kuis
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ========================================== -->
+            <!-- HALAMAN 2: MATERI PELAJARAN SMA            -->
+            <!-- ========================================== -->
+            <section id="page-materi" class="page-section hidden fade-in space-y-6">
+                <!-- Header Halaman & Filter -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <div>
+                        <h2 class="font-display text-2xl font-extrabold text-slate-900">Materi Matematika SMA</h2>
+                        <p class="text-sm text-slate-500 mt-0.5">Kumpulan ringkasan konsep, rumus penting, dan pembahasan contoh soal kelas 10–12.</p>
+                    </div>
+                    <!-- Filter Tingkat Kelas -->
+                    <div class="flex flex-wrap gap-2" id="materi-filters">
+                        <button onclick="filterMateri('all')" data-filter="all" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white transition">
+                            Semua Kelas
+                        </button>
+                        <button onclick="filterMateri('10')" data-filter="10" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+                            Kelas 10
+                        </button>
+                        <button onclick="filterMateri('11')" data-filter="11" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+                            Kelas 11
+                        </button>
+                        <button onclick="filterMateri('12')" data-filter="12" class="filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+                            Kelas 12
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Container Daftar Kartu Materi (Dirender oleh JS) -->
+                <div id="materi-list" class="space-y-5"></div>
+            </section>
+
+
+            <!-- ========================================== -->
+            <!-- HALAMAN 3: LATIHAN SOAL & KUIS INTERAKTIF  -->
+            <!-- ========================================== -->
+            <section id="page-kuis" class="page-section hidden fade-in space-y-6">
+                <!-- Tampilan 1: Pilih Kategori Kuis -->
+                <div id="quiz-selection" class="space-y-6">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs">
+                        <h2 class="font-display text-2xl font-extrabold text-slate-900">Latihan Soal & Kuis Interaktif</h2>
+                        <p class="text-sm text-slate-500 mt-1">Pilih topik di bawah ini untuk memulai simulasi ujian. Nilai dan pembahasan lengkap akan langsung muncul setelah selesai.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <!-- Kartu Kuis 1 -->
+                        <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold">Kelas 10</span>
+                                    <span class="text-xs font-semibold text-slate-400"><i class="fa-regular fa-clock mr-1"></i> 5 Soal</span>
+                                </div>
+                                <h3 class="font-display font-bold text-lg text-slate-900 mb-2">Aljabar & Persamaan Kuadrat</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed mb-6">
+                                    Menguji pemahaman akar-akar persamaan kuadrat, diskriminan, jumlah & hasil kali akar, serta fungsi kuadrat.
+                                </p>
+                            </div>
+                            <button onclick="startQuiz('aljabar')" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition">
+                                Mulai Kuis Aljabar
+                            </button>
+                        </div>
+
+                        <!-- Kartu Kuis 2 -->
+                        <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold">Kelas 10–11</span>
+                                    <span class="text-xs font-semibold text-slate-400"><i class="fa-regular fa-clock mr-1"></i> 5 Soal</span>
+                                </div>
+                                <h3 class="font-display font-bold text-lg text-slate-900 mb-2">Trigonometri & Identitas</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed mb-6">
+                                    Latihan perbandingan sudut istimewa, kuadran trigonometri, identitas dasar, serta aturan sinus dan cosinus.
+                                </p>
+                            </div>
+                            <button onclick="startQuiz('trigonometri')" class="w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm transition">
+                                Mulai Kuis Trigonometri
+                            </button>
+                        </div>
+
+                        <!-- Kartu Kuis 3 -->
+                        <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between hover:shadow-md transition">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold">Kelas 11–12</span>
+                                    <span class="text-xs font-semibold text-slate-400"><i class="fa-regular fa-clock mr-1"></i> 5 Soal</span>
+                                </div>
+                                <h3 class="font-display font-bold text-lg text-slate-900 mb-2">Kalkulus Turunan & Deret</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed mb-6">
+                                    Soal-soal aplikasi turunan pertama fungsi aljabar, gradien garis singgung, serta barisan aritmatika & geometri.
+                                </p>
+                            </div>
+                            <button onclick="startQuiz('kalkulus')" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm transition">
+                                Mulai Kuis Kalkulus & Deret
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tampilan 2: Area Pengerjaan Kuis Aktif -->
+                <div id="quiz-active" class="hidden max-w-3xl mx-auto bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                    <!-- Header Kuis & Progress Bar -->
+                    <div class="flex items-center justify-between mb-4">
+                        <span id="quiz-topic-badge" class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold">Topik Kuis</span>
+                        <button onclick="resetQuizView()" class="text-xs font-semibold text-slate-400 hover:text-rose-600 transition">
+                            <i class="fa-solid fa-xmark mr-1"></i> Batalkan Kuis
+                        </button>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between text-xs font-bold text-slate-500 mb-1.5">
+                            <span id="quiz-progress-text">Soal 1 dari 5</span>
+                            <span id="quiz-progress-percent">20%</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full transition-all duration-300" style="width: 20%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Pertanyaan & Opsi -->
+                    <div id="quiz-question-container" class="space-y-5">
+                        <h3 id="quiz-question-text" class="text-lg sm:text-xl font-bold text-slate-900 leading-relaxed">
+                            Memuat pertanyaan...
+                        </h3>
+                        <div id="quiz-options" class="space-y-3">
+                            <!-- Opsi dirender JS -->
+                        </div>
+                    </div>
+
+                    <!-- Navigasi Next / Submit -->
+                    <div class="mt-8 pt-5 border-t border-slate-100 flex items-center justify-between">
+                        <button id="quiz-prev-btn" onclick="prevQuestion()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-sm disabled:opacity-40 disabled:pointer-events-none">
+                            <i class="fa-solid fa-arrow-left mr-1.5"></i> Sebelumnya
+                        </button>
+                        <button id="quiz-next-btn" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition">
+                            Selanjutnya <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tampilan 3: Hasil Kuis & Pembahasan Lengkap -->
+                <div id="quiz-result" class="hidden max-w-3xl mx-auto space-y-6">
+                    <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 text-center shadow-sm">
+                        <div id="result-icon" class="w-16 h-16 mx-auto rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-3xl mb-4">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <h3 class="font-display text-2xl font-extrabold text-slate-900">Kuis Selesai!</h3>
+                        <p id="result-feedback" class="text-sm text-slate-500 mt-1 mb-5">Kerja bagus! Berikut adalah hasil evaluasimu.</p>
+                        
+                        <div class="inline-flex items-center gap-6 px-6 py-4 rounded-2xl bg-slate-50 border border-slate-200/80 mb-6">
+                            <div>
+                                <p class="text-xs text-slate-500 font-medium">Skor Akhir</p>
+                                <p id="result-score" class="text-3xl font-display font-extrabold text-indigo-600">100</p>
+                            </div>
+                            <div class="h-10 w-px bg-slate-200"></div>
+                            <div>
+                                <p class="text-xs text-slate-500 font-medium">Jawaban Benar</p>
+                                <p id="result-correct-count" class="text-3xl font-display font-extrabold text-emerald-600">5/5</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <button onclick="resetQuizView()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition">
+                                Pilih Topik Kuis Lain
+                            </button>
+                            <button onclick="navigateTo('tanya-ai')" class="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-sm transition">
+                                Diskusikan di Tanya AI
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pembahasan Per Nomor -->
+                    <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                        <h4 class="font-display font-bold text-lg text-slate-900 mb-4">
+                            <i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i> Pembahasan Lengkap Jawaban
+                        </h4>
+                        <div id="result-explanations" class="space-y-4">
+                            <!-- Pembahasan dirender JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ========================================== -->
+            <!-- HALAMAN 4: TANYA AI TUTOR MATEMATIKA       -->
+            <!-- ========================================== -->
+            <section id="page-tanya-ai" class="page-section hidden fade-in">
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[calc(100vh-7.5rem)] lg:h-[calc(100vh-4rem)]">
+                    
+                    <!-- Header Chat AI -->
+                    <div class="px-5 py-4 bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-700 text-white flex items-center justify-between shrink-0">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-xs border border-white/25 flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h2 class="font-display font-bold text-base sm:text-lg">MathVerse AI Tutor</h2>
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-200 border border-emerald-300/30">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online
+                                    </span>
+                                </div>
+                                <p class="text-xs text-indigo-100">Solver Persamaan Kuadrat, Turunan, Deret & Konsep SMA</p>
+                            </div>
+                        </div>
+                        <button onclick="clearChat()" title="Bersihkan Riwayat Chat" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-rotate-right"></i> <span class="hidden sm:inline">Reset Chat</span>
+                        </button>
+                    </div>
+
+                    <!-- Area Pesan Chat -->
+                    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 bg-slate-50/70">
+                        <!-- Pesan Pembuka AI -->
+                        <div class="flex items-start gap-3 max-w-3xl">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center justify-center text-sm shrink-0 mt-0.5 shadow-xs">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div class="bg-white border border-slate-200/90 rounded-2xl rounded-tl-none p-4 shadow-xs text-sm text-slate-700 leading-relaxed space-y-2.5">
+                                <p class="font-bold text-slate-900">Halo! Saya AI Tutor Matematika SMA kamu 👋</p>
+                                <p>Saya bisa membantu menyelesaikan soal matematika secara <strong>langkah demi langkah (step-by-step)</strong> maupun menjelaskan rumus yang belum kamu pahami. Coba ketikkan soalmu seperti:</p>
+                                <ul class="list-disc list-inside text-xs text-slate-600 space-y-1 bg-indigo-50/60 p-3 rounded-xl border border-indigo-100">
+                                    <li><strong>Persamaan Kuadrat:</strong> <code class="text-indigo-700 font-semibold">x^2 - 5x + 6 = 0</code> atau <code class="text-indigo-700 font-semibold">2x^2 + 7x + 3 = 0</code></li>
+                                    <li><strong>Turunan (Kalkulus):</strong> <code class="text-indigo-700 font-semibold">turunan dari 3x^3 - 4x^2 + 5x - 7</code></li>
+                                    <li><strong>Barisan Aritmatika:</strong> <code class="text-indigo-700 font-semibold">aritmatika a=4, b=3, n=12</code></li>
+                                    <li><strong>Penjelasan Rumus:</strong> <code class="text-indigo-700 font-semibold">Jelaskan rumus sin cos tan sudut istimewa</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Prompts (Tombol Contoh Soal Cepat) -->
+                    <div class="px-4 py-2.5 bg-white border-t border-slate-100 flex items-center gap-2 overflow-x-auto shrink-0">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase shrink-0"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i>Coba Cepat:</span>
+                        <button onclick="sendQuickPrompt('Selesaikan x^2 - 5x + 6 = 0')" class="shrink-0 px-3 py-1.5 rounded-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold transition">
+                            x² - 5x + 6 = 0
+                        </button>
+                        <button onclick="sendQuickPrompt('Hitung turunan dari 4x^3 - 6x^2 + 2x - 9')" class="shrink-0 px-3 py-1.5 rounded-full bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-semibold transition">
+                            Turunan 4x³ - 6x² + 2x - 9
+                        </button>
+                        <button onclick="sendQuickPrompt('Hitung deret aritmatika a=5, b=4, n=10')" class="shrink-0 px-3 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold transition">
+                            Aritmatika a=5, b=4, n=10
+                        </button>
+                        <button onclick="sendQuickPrompt('Jelaskan tabel sudut istimewa trigonometri')" class="shrink-0 px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold transition">
+                            Sudut Istimewa Trigonometri
+                        </button>
+                    </div>
+
+                    <!-- Form Input Chat -->
+                    <form onsubmit="handleChatSubmit(event)" class="p-3.5 sm:p-4 bg-white border-t border-slate-200 flex items-center gap-2.5 shrink-0">
+                        <input 
+                            type="text" 
+                            id="chat-input" 
+                            placeholder="Ketik soal matematika SMA atau tanyakan konsep rumus di sini..." 
+                            autocomplete="off"
+                            class="flex-1 px-4 py-3 rounded-xl bg-slate-100 border border-transparent focus:bg-white focus:border-indigo-500 focus:outline-none text-sm text-slate-800 transition"
+                        >
+                        <button type="submit" class="px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold text-sm shadow-md shadow-indigo-100 transition flex items-center gap-2 shrink-0">
+                            <span>Kirim</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- LOGIKA JAVASCRIPT APLIKASI                 -->
+    <!-- ========================================== -->
+    <script>
+        // --- 1. DATA MATERI PELAJARAN SMA ---
+        const materiData = [
+            {
+                id: 'aljabar',
+                kelas: '10',
+                badgeColor: 'bg-indigo-100 text-indigo-700',
+                title: 'Persamaan & Fungsi Kuadrat',
+                deskripsi: 'Memahami bentuk umum persamaan kuadrat, cara menentukan akar-akar, sifat diskriminan, serta titik puncak grafik parabola.',
+                rumus: [
+                    { nama: 'Bentuk Umum', isi: 'ax² + bx + c = 0  (dengan a ≠ 0)' },
+                    { nama: 'Rumus Kuadratik (ABC)', isi: 'x₁,₂ = [ -b ± √(b² - 4ac) ] / 2a' },
+                    { nama: 'Diskriminan (D)', isi: 'D = b² - 4ac  (D > 0: 2 akar real; D = 0: akar kembar; D < 0: imajiner)' },
+                    { nama: 'Jumlah & Kali Akar', isi: 'x₁ + x₂ = -b/a   dan   x₁ · x₂ = c/a' }
+                ],
+                contohSoal: {
+                    pertanyaan: 'Tentukan akar-akar persamaan kuadrat 2x² - 7x + 3 = 0 menggunakan pemfaktoran atau rumus ABC!',
+                    pembahasan: [
+                        'Diketahui nilai koefisien: a = 2, b = -7, dan c = 3.',
+                        'Cari dua bilangan yang jika dikalikan hasilnya a·c = 2 × 3 = 6, dan jika dijumlahkan hasilnya b = -7. Bilangan tersebut adalah -6 dan -1.',
+                        'Faktorkan persamaan: (2x - 1)(x - 3) = 0.',
+                        'Maka diperoleh: 2x - 1 = 0  ⇒  x₁ = 1/2  atau  x - 3 = 0  ⇒  x₂ = 3.',
+                        'Jadi, himpunan penyelesaiannya adalah {1/2, 3}.'
+                    ]
+                }
+            },
+            {
+                id: 'trigonometri',
+                kelas: '10',
+                badgeColor: 'bg-purple-100 text-purple-700',
+                title: 'Trigonometri Dasar & Aturan Segitiga',
+                deskripsi: 'Perbandingan sisi pada segitiga siku-siku, identitas trigonometri fundamental, serta aturan sinus dan cosinus pada segitiga sembarang.',
+                rumus: [
+                    { nama: 'Perbandingan Dasar', isi: 'sin α = Depan/Miring  |  cos α = Samping/Miring  |  tan α = Depan/Samping' },
+                    { nama: 'Identitas Pythagoras', isi: 'sin²α + cos²α = 1   |   1 + tan²α = sec²α' },
+                    { nama: 'Aturan Sinus', isi: 'a / sin A = b / sin B = c / sin C' },
+                    { nama: 'Aturan Cosinus', isi: 'a² = b² + c² - 2bc · cos A' }
+                ],
+                contohSoal: {
+                    pertanyaan: 'Diketahui segitiga ABC dengan panjang sisi b = 8 cm, c = 6 cm, dan besar sudut A = 60°. Hitunglah panjang sisi a!',
+                    pembahasan: [
+                        'Karena diketahui dua sisi (b dan c) serta satu sudut yang diapitnya (sudut A), gunakan Aturan Cosinus.',
+                        'Rumus: a² = b² + c² - 2bc · cos A',
+                        'Substitusi nilai: a² = 8² + 6² - 2(8)(6) · cos 60°',
+                        'Ingat bahwa cos 60° = 1/2, sehingga: a² = 64 + 36 - 96 · (1/2)',
+                        'a² = 100 - 48 = 52  ⇒  a = √52 = 2√13 cm.'
+                    ]
+                }
+            },
+            {
+                id: 'deret',
+                kelas: '11',
+                badgeColor: 'bg-blue-100 text-blue-700',
+                title: 'Barisan & Deret (Aritmatika dan Geometri)',
+                deskripsi: 'Pola bilangan dengan selisih tetap (aritmatika) maupun rasio tetap (geometri), termasuk deret geometri tak hingga.',
+                rumus: [
+                    { nama: 'Suku ke-n Aritmatika', isi: 'Uₙ = a + (n - 1)b' },
+                    { nama: 'Jumlah n Suku Aritmatika', isi: 'Sₙ = (n/2) · [ 2a + (n - 1)b ]  atau  Sₙ = (n/2)(a + Uₙ)' },
+                    { nama: 'Suku ke-n Geometri', isi: 'Uₙ = a · rⁿ⁻¹' },
+                    { nama: 'Deret Geometri Tak Hingga', isi: 'S∞ = a / (1 - r)   untuk syarat -1 < r < 1' }
+                ],
+                contohSoal: {
+                    pertanyaan: 'Suku ke-3 suatu barisan aritmatika adalah 11, sedangkan suku ke-7 adalah 23. Tentukan jumlah 10 suku pertama (S₁₀) deret tersebut!',
+                    pembahasan: [
+                        'Gunakan rumus Uₙ = a + (n - 1)b untuk menyusun dua persamaan:',
+                        'U₃ = a + 2b = 11  ... (Persamaan 1)',
+                        'U₇ = a + 6b = 23  ... (Persamaan 2)',
+                        'Eliminasi (Persamaan 2 - Persamaan 1): 4b = 12  ⇒  b = 3.',
+                        'Substitusi b = 3 ke Persamaan 1: a + 2(3) = 11  ⇒  a = 5.',
+                        'Hitung S₁₀: S₁₀ = (10/2) · [2(5) + (10 - 1)3] = 5 · [10 + 27] = 5 × 37 = 185.'
+                    ]
+                }
+            },
+            {
+                id: 'kalkulus',
+                kelas: '11',
+                badgeColor: 'bg-emerald-100 text-emerald-700',
+                title: 'Kalkulus Dasar: Turunan Fungsi Aljabar',
+                deskripsi: 'Konsep laju perubahan sesaat, aturan pangkat turunan, aturan rantai, serta menentukan gradien garis singgung kurva.',
+                rumus: [
+                    { nama: 'Aturan Pangkat Dasar', isi: 'Jika f(x) = a·xⁿ, maka f\'(x) = a·n·xⁿ⁻¹' },
+                    { nama: 'Turunan Konstanta', isi: 'Jika f(x) = k (konstanta), maka f\'(x) = 0' },
+                    { nama: 'Aturan Perkalian', isi: 'y = u · v  ⇒  y\' = u\'v + uv\'' },
+                    { nama: 'Gradien Garis Singgung', isi: 'm = f\'(x₁) pada titik (x₁, y₁)' }
+                ],
+                contohSoal: {
+                    pertanyaan: 'Tentukan gradien garis singgung kurva f(x) = x³ - 3x² + 4x - 5 di titik yang berabsis x = 2!',
+                    pembahasan: [
+                        'Langkah 1: Cari turunan pertama f\'(x) dari fungsi f(x) = x³ - 3x² + 4x - 5.',
+                        'f\'(x) = 3x³⁻¹ - 3(2)x²⁻¹ + 4(1)x¹⁻¹ - 0',
+                        'f\'(x) = 3x² - 6x + 4.',
+                        'Langkah 2: Substitusikan nilai absis x = 2 ke dalam f\'(x) untuk memperoleh gradien (m).',
+                        'm = f\'(2) = 3(2)² - 6(2) + 4 = 3(4) - 12 + 4 = 12 - 12 + 4 = 4.'
+                    ]
+                }
+            },
+            {
+                id: 'statistika',
+                kelas: '12',
+                badgeColor: 'bg-amber-100 text-amber-700',
+                title: 'Statistika Data Berkelompok',
+                deskripsi: 'Mengolah data dalam tabel distribusi frekuensi untuk mencari ukuran pemusatan data (Mean, Median, Modus).',
+                rumus: [
+                    { nama: 'Rata-rata (Mean)', isi: 'x̄ = ∑(fᵢ · xᵢ) / ∑fᵢ' },
+                    { nama: 'Median Data Kelompok', isi: 'Me = Tb + [ ((1/2)n - fk) / fₘ ] · p' },
+                    { nama: 'Modus Data Kelompok', isi: 'Mo = Tb + [ d₁ / (d₁ + d₂) ] · p' },
+                    { nama: 'Keterangan Simbol', isi: 'Tb = Tepi bawah kelas; p = Panjang kelas; fk = Frekuensi kumulatif sebelum kelas median' }
+                ],
+                contohSoal: {
+                    pertanyaan: 'Diketahui nilai ulangan 5 siswa adalah 70, 80, 85, 75, dan 90. Hitunglah rata-rata (mean) dan simpangan rata-ratanya!',
+                    pembahasan: [
+                        'Jumlah seluruh data = 70 + 80 + 85 + 75 + 90 = 400.',
+                        'Rata-rata (x̄) = 400 / 5 = 80.',
+                        'Hitung selisih mutlak tiap data terhadap rata-rata: |70-80| + |80-80| + |85-80| + |75-80| + |90-80| = 10 + 0 + 5 + 5 + 10 = 30.',
+                        'Simpangan rata-rata (SR) = 30 / 5 = 6.'
+                    ]
+                }
+            }
+        ];
+
+        // --- 2. DATA BANK SOAL KUIS ---
+        const quizDatabase = {
+            aljabar: {
+                title: 'Kuis Aljabar & Persamaan Kuadrat',
+                questions: [
+                    {
+                        q: 'Akar-akar dari persamaan kuadrat x² - 8x + 15 = 0 adalah ...',
+                        options: ['x = 3 atau x = 5', 'x = -3 atau x = -5', 'x = 2 atau x = 6', 'x = -3 atau x = 5'],
+                        answer: 0,
+                        explanation: 'Cari dua bilangan yang hasil kalinya 15 dan jumlahnya -8, yaitu -3 dan -5. Maka (x - 3)(x - 5) = 0, sehingga x = 3 atau x = 5.'
+                    },
+                    {
+                        q: 'Jika x₁ dan x₂ adalah akar-akar dari 2x² - 6x + 5 = 0, maka nilai dari x₁ + x₂ adalah ...',
+                        options: ['-3', '3', '5/2', '-5/2'],
+                        answer: 1,
+                        explanation: 'Rumus jumlah akar persamaan kuadrat ax² + bx + c = 0 adalah x₁ + x₂ = -b/a. Dengan a = 2 dan b = -6, maka x₁ + x₂ = -(-6)/2 = 3.'
+                    },
+                    {
+                        q: 'Nilai diskriminan dari persamaan kuadrat x² + 4x + 4 = 0 adalah ...',
+                        options: ['0', '8', '16', '32'],
+                        answer: 0,
+                        explanation: 'D = b² - 4ac = 4² - 4(1)(4) = 16 - 16 = 0. Karena D = 0, persamaan ini memiliki dua akar real yang kembar (x = -2).'
+                    },
+                    {
+                        q: 'Persamaan kuadrat yang akar-akarnya -2 dan 4 adalah ...',
+                        options: ['x² + 2x - 8 = 0', 'x² - 2x - 8 = 0', 'x² - 2x + 8 = 0', 'x² + 6x + 8 = 0'],
+                        answer: 1,
+                        explanation: 'Gunakan rumus x² - (x₁ + x₂)x + (x₁ · x₂) = 0 ⇒ x² - (-2 + 4)x + (-2 × 4) = 0 ⇒ x² - 2x - 8 = 0.'
+                    },
+                    {
+                        q: 'Koordinat titik balik (puncak) grafik fungsi kuadrat f(x) = x² - 6x + 5 adalah ...',
+                        options: ['(3, -4)', '(-3, 4)', '(3, 4)', '(6, -5)'],
+                        answer: 0,
+                        explanation: 'Absis puncak xₚ = -b/(2a) = -(-6)/(2·1) = 3. Ordinat puncak yₚ = f(3) = 3² - 6(3) + 5 = 9 - 18 + 5 = -4. Jadi titik puncaknya (3, -4).'
+                    }
+                ]
+            },
+            trigonometri: {
+                title: 'Kuis Trigonometri & Identitas',
+                questions: [
+                    {
+                        q: 'Nilai dari sin 30° + cos 60° adalah ...',
+                        options: ['0', '1/2', '1', '√3'],
+                        answer: 2,
+                        explanation: 'Nilai sin 30° = 1/2 dan cos 60° = 1/2. Maka 1/2 + 1/2 = 1.'
+                    },
+                    {
+                        q: 'Pada segitiga siku-siku ABC (siku-siku di B), panjang AB = 12 cm dan BC = 5 cm. Nilai sin A adalah ...',
+                        options: ['5/12', '12/13', '5/13', '13/5'],
+                        answer: 2,
+                        explanation: 'Sisi miring AC = √(12² + 5²) = √169 = 13 cm. Sisi depan sudut A adalah BC = 5 cm. Maka sin A = Depan/Miring = 5/13.'
+                    },
+                    {
+                        q: 'Nilai dari tan 45° × cos 30° adalah ...',
+                        options: ['1/2', '(1/2)√2', '(1/2)√3', '√3'],
+                        answer: 2,
+                        explanation: 'Diketahui tan 45° = 1 dan cos 30° = (1/2)√3. Maka 1 × (1/2)√3 = (1/2)√3.'
+                    },
+                    {
+                        q: 'Di kuadran II, perbandingan trigonometri yang bernilai positif adalah ...',
+                        options: ['Sinus dan Cosecan', 'Cosinus dan Secan', 'Tangen dan Cotangen', 'Semua bernilai positif'],
+                        answer: 0,
+                        explanation: 'Ingat jembatan keledai "Semua Sindikat Tangan Kosong": Kuadran I (Semua +), Kuadran II (Sin & Csc +), Kuadran III (Tan & Cot +), Kuadran IV (Cos & Sec +).'
+                    },
+                    {
+                        q: 'Bentuk sederhana dari (1 - cos²x) / sin x adalah ...',
+                        options: ['cos x', 'sin x', 'tan x', '1'],
+                        answer: 1,
+                        explanation: 'Dari identitas sin²x + cos²x = 1, diperoleh 1 - cos²x = sin²x. Maka sin²x / sin x = sin x.'
+                    }
+                ]
+            },
+            kalkulus: {
+                title: 'Kuis Kalkulus Turunan & Deret',
+                questions: [
+                    {
+                        q: 'Turunan pertama dari fungsi f(x) = 4x³ - 5x² + 7x - 9 adalah ...',
+                        options: ['12x² - 10x + 7', '12x² - 5x + 7', '4x² - 10x + 7', '12x³ - 10x² + 7'],
+                        answer: 0,
+                        explanation: 'Gunakan aturan pangkat f\'(x) = n·a·xⁿ⁻¹: f\'(x) = 3(4)x² - 2(5)x¹ + 1(7)x⁰ - 0 = 12x² - 10x + 7.'
+                    },
+                    {
+                        q: 'Jika f(x) = 2x² + 3x - 1, maka nilai dari f\'(4) adalah ...',
+                        options: ['16', '19', '21', '43'],
+                        answer: 1,
+                        explanation: 'Turunan pertama: f\'(x) = 4x + 3. Substitusi x = 4: f\'(4) = 4(4) + 3 = 16 + 3 = 19.'
+                    },
+                    {
+                        q: 'Suku ke-15 dari barisan aritmatika 3, 7, 11, 15, ... adalah ...',
+                        options: ['55', '59', '63', '67'],
+                        answer: 1,
+                        explanation: 'Diketahui a = 3 dan beda b = 7 - 3 = 4. Rumus Uₙ = a + (n - 1)b ⇒ U₁₅ = 3 + (14)(4) = 3 + 56 = 59.'
+                    },
+                    {
+                        q: 'Jumlah deret geometri tak hingga 12 + 6 + 3 + 3/2 + ... adalah ...',
+                        options: ['18', '24', '30', '36'],
+                        answer: 1,
+                        explanation: 'Suku pertama a = 12 dan rasio r = 6/12 = 1/2. Rumus S∞ = a / (1 - r) = 12 / (1 - 1/2) = 12 / (1/2) = 24.'
+                    },
+                    {
+                        q: 'Gradien garis singgung kurva y = x² - 4x + 1 di titik (3, -2) adalah ...',
+                        options: ['-2', '2', '3', '6'],
+                        answer: 1,
+                        explanation: 'Gradien m = y\' = 2x - 4. Pada titik dengan x = 3, maka m = 2(3) - 4 = 6 - 4 = 2.'
+                    }
+                ]
+            }
+        };
+
+        // --- 3. STATE APLIKASI ---
+        let appState = {
+            currentPage: 'dashboard',
+            materiRead: new Set(['aljabar', 'trigonometri']),
+            quizScores: [85],
+            aiQuestionsCount: 0,
+            activeQuiz: null,
+            currentQuestionIdx: 0,
+            userAnswers: []
+        };
+
+        // --- 4. NAVIGASI & UI HELPERS ---
+        function navigateTo(pageId) {
+            appState.currentPage = pageId;
+
+            // Sembunyikan semua section
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.add('hidden'));
+            // Tampilkan target section
+            const target = document.getElementById(`page-${pageId}`);
+            if (target) target.classList.remove('hidden');
+
+            // Update status aktif pada sidebar
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('bg-indigo-50', 'text-indigo-700');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-50', 'hover:text-slate-900');
+            });
+            const activeBtn = document.getElementById(`nav-${pageId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-50', 'hover:text-slate-900');
+                activeBtn.classList.add('bg-indigo-50', 'text-indigo-700');
+            }
+
+            // Tutup sidebar di mode mobile setelah klik
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (!sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+
+            // Update statistik dashboard saat kembali ke dashboard
+            if (pageId === 'dashboard') updateDashboardStats();
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function updateDashboardStats() {
+            document.getElementById('stat-materi-count').textContent = appState.materiRead.size;
+            const avgScore = appState.quizScores.length > 0
+                ? Math.round(appState.quizScores.reduce((a, b) => a + b, 0) / appState.quizScores.length)
+                : 0;
+            document.getElementById('stat-quiz-score').textContent = `${avgScore}%`;
+            document.getElementById('stat-quiz-done').textContent = appState.quizScores.length;
+            document.getElementById('stat-ai-asked').textContent = appState.aiQuestionsCount;
+        }
+
+        // --- 5. LOGIKA HALAMAN MATERI ---
+        function renderMateriList(filterKelas = 'all') {
+            const container = document.getElementById('materi-list');
+            container.innerHTML = '';
+
+            const filtered = filterKelas === 'all'
+                ? materiData
+                : materiData.filter(m => m.kelas === filterKelas);
+
+            filtered.forEach(item => {
+                const rumusHTML = item.rumus.map(r => `
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">${r.nama}</p>
+                        <p class="font-mono text-xs sm:text-sm font-semibold text-indigo-900">${r.isi}</p>
+                    </div>
+                `).join('');
+
+                const pembahasanSteps = item.contohSoal.pembahasan.map((step, idx) => `
+                    <li class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
+                        <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">${idx + 1}</span>
+                        <span>${step}</span>
+                    </li>
+                `).join('');
+
+                const card = document.createElement('div');
+                card.id = `materi-card-${item.id}`;
+                card.className = 'bg-white rounded-2xl border border-slate-200/90 p-6 shadow-xs transition hover:border-indigo-200';
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${item.badgeColor}">Kelas ${item.kelas} SMA</span>
+                        <button onclick="askAIAboutTopic('${item.title}')" class="text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center gap-1.5 bg-purple-50 px-3 py-1.5 rounded-xl transition">
+                            <i class="fa-solid fa-robot"></i> Tanya AI tentang ini
+                        </button>
+                    </div>
+                    <h3 class="font-display text-xl font-bold text-slate-900 mb-1.5">${item.title}</h3>
+                    <p class="text-sm text-slate-600 mb-5 leading-relaxed">${item.deskripsi}</p>
+
+                    <div class="mb-5">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-square-root-variable text-indigo-600"></i> Ringkasan Rumus Penting
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            ${rumusHTML}
+                        </div>
+                    </div>
+
+                    <!-- Accordion Contoh Soal & Pembahasan -->
+                    <div class="rounded-2xl border border-indigo-100 bg-indigo-50/40 overflow-hidden">
+                        <button onclick="togglePembahasan('${item.id}')" class="w-full px-4 py-3.5 text-left flex items-center justify-between gap-3 hover:bg-indigo-50/80 transition">
+                            <div class="flex items-center gap-2.5">
+                                <span class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white text-[11px] font-bold shrink-0">Contoh Soal</span>
+                                <span class="text-xs sm:text-sm font-semibold text-slate-800 line-clamp-1">${item.contohSoal.pertanyaan}</span>
+                            </div>
+                            <i id="icon-accordion-${item.id}" class="fa-solid fa-chevron-down text-indigo-600 text-xs transition-transform duration-200"></i>
+                        </button>
+                        <div id="body-accordion-${item.id}" class="hidden px-4 pb-4 pt-2 border-t border-indigo-100/80 bg-white">
+                            <p class="text-xs sm:text-sm font-semibold text-slate-900 mb-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                Soal: ${item.contohSoal.pertanyaan}
+                            </p>
+                            <p class="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">Langkah Pembahasan:</p>
+                            <ul class="space-y-2">
+                                ${pembahasanSteps}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterMateri(kelas) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === kelas) {
+                    btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white transition';
+                } else {
+                    btn.className = 'filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition';
+                }
+            });
+            renderMateriList(kelas);
+        }
+
+        function togglePembahasan(id) {
+            appState.materiRead.add(id);
+            const body = document.getElementById(`body-accordion-${id}`);
+            const icon = document.getElementById(`icon-accordion-${id}`);
+            body.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        function openSpecificMateri(id) {
+            navigateTo('materi');
+            filterMateri('all');
+            setTimeout(() => {
+                const el = document.getElementById(`materi-card-${id}`);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    togglePembahasan(id);
+                }
+            }, 100);
+        }
+
+        function askAIAboutTopic(topicTitle) {
+            navigateTo('tanya-ai');
+            sendQuickPrompt(`Tolong jelaskan konsep dasar dan rumus penting dari materi ${topicTitle}`);
+        }
+
+        // --- 6. LOGIKA HALAMAN KUIS INTERAKTIF ---
+        function startQuiz(topicKey) {
+            const quiz = quizDatabase[topicKey];
+            if (!quiz) return;
+
+            appState.activeQuiz = quiz;
+            appState.currentQuestionIdx = 0;
+            appState.userAnswers = new Array(quiz.questions.length).fill(null);
+
+            document.getElementById('quiz-selection').classList.add('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-active').classList.remove('hidden');
+
+            document.getElementById('quiz-topic-badge').textContent = quiz.title;
+            renderCurrentQuestion();
+        }
+
+        function renderCurrentQuestion() {
+            const quiz = appState.activeQuiz;
+            const idx = appState.currentQuestionIdx;
+            const total = quiz.questions.length;
+            const qData = quiz.questions[idx];
+
+            // Update Progress Bar
+            const percent = Math.round(((idx + 1) / total) * 100);
+            document.getElementById('quiz-progress-text').textContent = `Soal ${idx + 1} dari ${total}`;
+            document.getElementById('quiz-progress-percent').textContent = `${percent}%`;
+            document.getElementById('quiz-progress-bar').style.width = `${percent}%`;
+
+            // Render Pertanyaan
+            document.getElementById('quiz-question-text').textContent = `${idx + 1}. ${qData.q}`;
+
+            // Render Pilihan Ganda
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+
+            qData.options.forEach((opt, optIdx) => {
+                const isSelected = appState.userAnswers[idx] === optIdx;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => selectAnswer(optIdx);
+                btn.className = `w-full text-left p-4 rounded-2xl border-2 transition flex items-center gap-3.5 ${
+                    isSelected
+                        ? 'border-indigo-600 bg-indigo-50/70 text-indigo-900 font-semibold'
+                        : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50 text-slate-700'
+                }`;
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 ${
+                        isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'
+                    }">${letters[optIdx]}</span>
+                    <span class="text-sm sm:text-base">${opt}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Atur Tombol Navigasi
+            document.getElementById('quiz-prev-btn').disabled = idx === 0;
+            const nextBtn = document.getElementById('quiz-next-btn');
+            if (idx === total - 1) {
+                nextBtn.innerHTML = `Selesai & Lihat Nilai <i class="fa-solid fa-check ml-1.5"></i>`;
+                nextBtn.className = 'px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition';
+            } else {
+                nextBtn.innerHTML = `Selanjutnya <i class="fa-solid fa-arrow-right ml-1.5"></i>`;
+                nextBtn.className = 'px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-sm transition';
+            }
+        }
+
+        function selectAnswer(optIdx) {
+            appState.userAnswers[appState.currentQuestionIdx] = optIdx;
+            renderCurrentQuestion();
+        }
+
+        function prevQuestion() {
+            if (appState.currentQuestionIdx > 0) {
+                appState.currentQuestionIdx--;
+                renderCurrentQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            const total = appState.activeQuiz.questions.length;
+            if (appState.currentQuestionIdx < total - 1) {
+                appState.currentQuestionIdx++;
+                renderCurrentQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            const quiz = appState.activeQuiz;
+            let correctCount = 0;
+
+            quiz.questions.forEach((q, idx) => {
+                if (appState.userAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const score = Math.round((correctCount / quiz.questions.length) * 100);
+            appState.quizScores.push(score);
+
+            document.getElementById('quiz-active').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+
+            document.getElementById('result-score').textContent = score;
+            document.getElementById('result-correct-count').textContent = `${correctCount}/${quiz.questions.length}`;
+
+            const feedbackEl = document.getElementById('result-feedback');
+            if (score >= 80) {
+                feedbackEl.textContent = 'Luar biasa! Pemahamanmu pada materi ini sudah sangat mantap.';
+            } else if (score >= 60) {
+                feedbackEl.textContent = 'Cukup baik! Pelajari kembali pembahasan di bawah agar makin sempurna.';
+            } else {
+                feedbackEl.textContent = 'Jangan menyerah! Baca pembahasan di bawah dan coba ulangi kuisnya ya.';
+            }
+
+            // Render Pembahasan Setiap Nomor
+            const expContainer = document.getElementById('result-explanations');
+            expContainer.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+
+            quiz.questions.forEach((q, idx) => {
+                const userAns = appState.userAnswers[idx];
+                const isCorrect = userAns === q.answer;
+                const userAnsText = userAns !== null ? `${letters[userAns]}. ${q.options[userAns]}` : 'Tidak dijawab';
+                const correctAnsText = `${letters[q.answer]}. ${q.options[q.answer]}`;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `p-4 rounded-2xl border ${isCorrect ? 'border-emerald-200 bg-emerald-50/30' : 'border-rose-200 bg-rose-50/30'}`;
+                itemDiv.innerHTML = `
+                    <div class="flex items-start justify-between gap-2 mb-2">
+                        <p class="font-bold text-sm text-slate-900">${idx + 1}. ${q.q}</p>
+                        <span class="shrink-0 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
+                            isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                        }">
+                            ${isCorrect ? 'Benar' : 'Kurang Tepat'}
+                        </span>
+                    </div>
+                    <div class="text-xs space-y-1 mb-2.5">
+                        <p class="${isCorrect ? 'text-emerald-700' : 'text-rose-700'} font-medium">Jawaban Kamu: ${userAnsText}</p>
+                        ${!isCorrect ? `<p class="text-emerald-700 font-bold">Jawaban Benar: ${correctAnsText}</p>` : ''}
+                    </div>
+                    <div class="p-3 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-600 leading-relaxed">
+                        <strong class="text-slate-800">Pembahasan:</strong> ${q.explanation}
+                    </div>
+                `;
+                expContainer.appendChild(itemDiv);
+            });
+        }
+
+        function resetQuizView() {
+            document.getElementById('quiz-active').classList.add('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-selection').classList.remove('hidden');
+        }
+
+        // --- 7. LOGIKA TANYA AI TUTOR MATEMATIKA (SMART MATH PARSER) ---
+        function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+            processUserMessage(text);
+        }
+
+        function sendQuickPrompt(text) {
+            processUserMessage(text);
+        }
+
+        function processUserMessage(text) {
+            appState.aiQuestionsCount++;
+            appendUserBubble(text);
+
+            const typingId = appendTypingIndicator();
+            setTimeout(() => {
+                removeTypingIndicator(typingId);
+                const aiResponseHTML = generateSmartMathResponse(text);
+                appendAIBubble(aiResponseHTML);
+            }, 650);
+        }
+
+        function appendUserBubble(text) {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = 'flex items-start justify-end gap-3 fade-in';
+            div.innerHTML = `
+                <div class="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-2xl rounded-tr-none px-4 py-3 shadow-sm max-w-xl text-sm leading-relaxed">
+                    ${escapeHTML(text)}
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center text-sm shrink-0 mt-0.5 font-bold">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function appendTypingIndicator() {
+            const id = 'typing-' + Date.now();
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = 'flex items-start gap-3 max-w-3xl fade-in';
+            div.innerHTML = `
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center justify-center text-sm shrink-0 mt-0.5">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-none px-4 py-3.5 shadow-xs flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 typing-dot"></span>
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 typing-dot"></span>
+                    <span class="w-2 h-2 rounded-full bg-indigo-500 typing-dot"></span>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
+
+        function removeTypingIndicator(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function appendAIBubble(htmlContent) {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            div.className = 'flex items-start gap-3 max-w-3xl fade-in';
+            div.innerHTML = `
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center justify-center text-sm shrink-0 mt-0.5 shadow-xs">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="bg-white border border-slate-200/90 rounded-2xl rounded-tl-none p-4 sm:p-5 shadow-xs text-sm text-slate-700 leading-relaxed space-y-3 w-full">
+                    ${htmlContent}
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function clearChat() {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = `
+                <div class="flex items-start gap-3 max-w-3xl fade-in">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center justify-center text-sm shrink-0 mt-0.5">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bg-white border border-slate-200/90 rounded-2xl rounded-tl-none p-4 shadow-xs text-sm text-slate-700">
+                        Riwayat obrolan telah dibersihkan. Silakan ajukan soal atau pertanyaan matematika SMA berikutnya!
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- MESIN PENGHITUNG & TUTOR AI CERDAS (CLIENT-SIDE PARSER) ---
+        function generateSmartMathResponse(rawQuery) {
+            const q = rawQuery.toLowerCase().replace(/\s+/g, ' ').trim();
+            const cleanMath = q.replace(/\s+/g, '');
+
+            // 1. DETEKSI PERSAMAAN KUADRAT: ax^2 + bx + c = 0
+            // Mendukung format seperti x^2-5x+6=0, 2x^2+7x+3=0, x^2-9=0, x^2+4x=0
+            const quadMatch = cleanMath.match(/([+-]?\d*)x\^2([+-]\d*x)?([+-]\d+)?=0/);
+            if (quadMatch) {
+                let aStr = quadMatch[1];
+                let a = (aStr === '' || aStr === '+') ? 1 : (aStr === '-' ? -1 : parseFloat(aStr));
+
+                let b = 0;
+                if (quadMatch[2]) {
+                    let bStr = quadMatch[2].replace('x', '');
+                    b = (bStr === '' || bStr === '+') ? 1 : (bStr === '-' ? -1 : parseFloat(bStr));
+                }
+
+                let c = quadMatch[3] ? parseFloat(quadMatch[3]) : 0;
+
+                if (a !== 0) {
+                    const D = (b * b) - (4 * a * c);
+                    let stepsHTML = `
+                        <div class="flex items-center gap-2 text-indigo-700 font-bold">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>Penyelesaian Persamaan Kuadrat Langkah demi Langkah</span>
+                        </div>
+                        <p>Dari persamaan yang kamu berikan, kita identifikasi nilai koefisiennya:</p>
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs">
+                            a = ${a}, &nbsp; b = ${b}, &nbsp; c = ${c}
+                        </div>
+                        <p><strong>Langkah 1: Hitung Nilai Diskriminan (D)</strong><br>
+                        <span class="font-mono text-xs bg-indigo-50 px-2 py-0.5 rounded">D = b² - 4ac = (${b})² - 4(${a})(${c}) = ${b*b} - (${4*a*c}) = <strong>${D}</strong></span></p>
+                    `;
+
+                    if (D > 0) {
+                        const sqrtD = Math.sqrt(D);
+                        const x1 = (-b + sqrtD) / (2 * a);
+                        const x2 = (-b - sqrtD) / (2 * a);
+                        const formatX1 = Number.isInteger(x1) ? x1 : x1.toFixed(2);
+                        const formatX2 = Number.isInteger(x2) ? x2 : x2.toFixed(2);
+
+                        stepsHTML += `
+                            <p><strong>Langkah 2: Gunakan Rumus Kuadratik (Rumus ABC)</strong><br>
+                            Karena D > 0, persamaan memiliki 2 akar real berbeda:<br>
+                            <span class="font-mono text-xs block mt-1 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                                x₁,₂ = [ -(${b}) ± √${D} ] / (2 · ${a})<br>
+                                x₁ = (${-b} + ${Number.isInteger(sqrtD) ? sqrtD : sqrtD.toFixed(2)}) / ${2*a} = <strong>${formatX1}</strong><br>
+                                x₂ = (${-b} - ${Number.isInteger(sqrtD) ? sqrtD : sqrtD.toFixed(2)}) / ${2*a} = <strong>${formatX2}</strong>
+                            </span></p>
+                            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-semibold text-xs sm:text-sm">
+                                ✅ Jadi, himpunan penyelesaiannya adalah <strong>x₁ = ${formatX1}</strong> dan <strong>x₂ = ${formatX2}</strong>.
+                            </div>
+                        `;
+                    } else if (D === 0) {
+                        const x = -b / (2 * a);
+                        stepsHTML += `
+                            <p><strong>Langkah 2: Hitung Akar Kembar</strong><br>
+                            Karena D = 0, persamaan memiliki satu akar real kembar:<br>
+                            <span class="font-mono text-xs bg-slate-50 px-2 py-1 rounded">x = -b / 2a = -(${b}) / ${2*a} = <strong>${x}</strong></span></p>
+                            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-semibold text-xs sm:text-sm">
+                                ✅ Jadi, akar kembar persamaan tersebut adalah <strong>x = ${x}</strong>.
+                            </div>
+                        `;
+                    } else {
+                        stepsHTML += `
+                            <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm">
+                                ⚠️ Karena nilai Diskriminan <strong>D = ${D} < 0</strong>, persamaan kuadrat ini <strong>tidak memiliki akar real</strong> (akar-akarnya bersifat imajiner/kompleks).
+                            </div>
+                        `;
+                    }
+                    return stepsHTML;
+                }
+            }
+
+            // 2. DETEKSI TURUNAN POLINOMIAL (KALKULUS)
+            if (q.includes('turunan')) {
+                // Ambil ekspresi polinomial setelah kata 'dari' atau setelah 'turunan'
+                let expr = cleanMath.replace(/.*turunan(dari)?(f\(x\)=|y=)?/, '');
+                // Parse suku-suku polinomial seperti 4x^3-6x^2+2x-9
+                const terms = expr.match(/[+-]?[^+-]+/g);
+                if (terms && terms.some(t => t.includes('x'))) {
+                    let derivativeTerms = [];
+                    let explanationSteps = [];
+
+                    terms.forEach(term => {
+                        if (!term.includes('x')) {
+                            explanationSteps.push(`Turunan konstanta <code>${term}</code> adalah <code>0</code>`);
+                        } else if (term.includes('x^')) {
+                            const parts = term.split('x^');
+                            let coef = (parts[0] === '' || parts[0] === '+') ? 1 : (parts[0] === '-' ? -1 : parseFloat(parts[0]));
+                            let exp = parseFloat(parts[1]);
+                            let newCoef = coef * exp;
+                            let newExp = exp - 1;
+                            let resStr = newExp === 1 ? `${newCoef}x` : `${newCoef}x^${newExp}`;
+                            if (newCoef > 0 && derivativeTerms.length > 0) resStr = '+' + resStr;
+                            derivativeTerms.push(resStr);
+                            explanationSteps.push(`Turunan <code>${term}</code> ⇒ ${coef}·${exp}x<sup>${exp}-1</sup> = <strong>${resStr.replace(/^\+/, '')}</strong>`);
+                        } else {
+                            // Suku pangkat 1 (misal +2x atau -5x)
+                            let coefStr = term.replace('x', '');
+                            let coef = (coefStr === '' || coefStr === '+') ? 1 : (coefStr === '-' ? -1 : parseFloat(coefStr));
+                            let resStr = (coef > 0 && derivativeTerms.length > 0) ? `+${coef}` : `${coef}`;
+                            derivativeTerms.push(resStr);
+                            explanationSteps.push(`Turunan <code>${term}</code> ⇒ <strong>${coef}</strong>`);
+                        }
+                    });
+
+                    const finalDerivative = derivativeTerms.join(' ').replace(/\+/g, '+ ').replace(/-/g, '- ').trim();
+                    return `
+                        <div class="flex items-center gap-2 text-purple-700 font-bold">
+                            <i class="fa-solid fa-superscript"></i>
+                            <span>Penyelesaian Turunan Pertama Fungsi Aljabar</span>
+                        </div>
+                        <p>Ingat aturan dasar turunan: jika <strong>f(x) = a·xⁿ</strong>, maka <strong>f'(x) = a·n·xⁿ⁻¹</strong>.</p>
+                        <ul class="list-disc list-inside text-xs space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            ${explanationSteps.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-semibold text-xs sm:text-sm">
+                            ✅ Jadi, turunan pertamanya adalah: <strong>f'(x) = ${finalDerivative}</strong>
+                        </div>
+                    `;
+                }
+            }
+
+            // 3. DETEKSI DERET ARITMATIKA (a=..., b=..., n=...)
+            if (q.includes('aritmatika') && q.includes('a=') && q.includes('b=') && q.includes('n=')) {
+                const aMatch = cleanMath.match(/a=(-?\d+)/);
+                const bMatch = cleanMath.match(/b=(-?\d+)/);
+                const nMatch = cleanMath.match(/n=(\d+)/);
+
+                if (aMatch && bMatch && nMatch) {
+                    const a = parseInt(aMatch[1]);
+                    const b = parseInt(bMatch[1]);
+                    const n = parseInt(nMatch[1]);
+                    const un = a + (n - 1) * b;
+                    const sn = (n / 2) * (a + un);
+
+                    return `
+                        <div class="flex items-center gap-2 text-blue-700 font-bold">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            <span>Perhitungan Barisan & Deret Aritmatika</span>
+                        </div>
+                        <p>Diketahui: Suku pertama <strong>a = ${a}</strong>, beda <strong>b = ${b}</strong>, dan banyak suku <strong>n = ${n}</strong>.</p>
+                        <div class="space-y-2 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-200 font-mono">
+                            <p><strong>1. Mencari Suku ke-${n} (Uₙ):</strong><br>
+                            U${n} = a + (n - 1)b = ${a} + (${n} - 1)(${b}) = ${a} + ${(n-1)*b} = <strong>${un}</strong></p>
+                            <p><strong>2. Mencari Jumlah ${n} Suku Pertama (Sₙ):</strong><br>
+                            S${n} = (n / 2) · (a + U${n}) = (${n} / 2) · (${a} + ${un}) = ${n/2} × ${a + un} = <strong>${sn}</strong></p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-semibold text-xs sm:text-sm">
+                            ✅ Hasil: Suku ke-${n} (U${n}) = <strong>${un}</strong> dan Jumlah ${n} suku pertama (S${n}) = <strong>${sn}</strong>.
+                        </div>
+                    `;
+                }
+            }
+
+            // 4. PENJELASAN KONSEP & TABEL TRIGONOMETRI
+            if (q.includes('trigonometri') || q.includes('sudut istimewa') || q.includes('sin cos')) {
+                return `
+                    <div class="font-bold text-indigo-700"><i class="fa-solid fa-compass-drafting mr-1.5"></i> Panduan Sudut Istimewa Trigonometri (Kuadran I)</div>
+                    <p>Berikut adalah tabel nilai trigonometri sudut istimewa yang wajib kamu hafal di kelas 10–12 SMA:</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-center border-collapse rounded-xl overflow-hidden border border-slate-200">
+                            <thead class="bg-indigo-600 text-white">
+                                <tr>
+                                    <th class="p-2">Fungsi</th>
+                                    <th class="p-2">0°</th>
+                                    <th class="p-2">30°</th>
+                                    <th class="p-2">45°</th>
+                                    <th class="p-2">60°</th>
+                                    <th class="p-2">90°</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 bg-white font-mono">
+                                <tr><td class="p-2 font-bold bg-slate-50">sin α</td><td>0</td><td>1/2</td><td>(1/2)√2</td><td>(1/2)√3</td><td>1</td></tr>
+                                <tr><td class="p-2 font-bold bg-slate-50">cos α</td><td>1</td><td>(1/2)√3</td><td>(1/2)√2</td><td>1/2</td><td>0</td></tr>
+                                <tr><td class="p-2 font-bold bg-slate-50">tan α</td><td>0</td><td>(1/3)√3</td><td>1</td><td>√3</td><td>∞</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-slate-600"><strong>Tips Cepat:</strong> Nilai <em>cos α</em> adalah kebalikan urutan dari <em>sin α</em>, sedangkan <em>tan α = sin α / cos α</em>.</p>
+                `;
+            }
+
+            // 5. OPERASI ARITMATIKA UMUM (Kalkulator Ekspresi Dasar seperti 15 * 4 + 10)
+            if (/^[0-9+\-*/().\s]+$/.test(q) && /[+\-*/]/.test(q)) {
+                try {
+                    const evalResult = Function('"use strict";return (' + q + ')')();
+                    if (typeof evalResult === 'number' && !isNaN(evalResult)) {
+                        return `
+                            <p>Saya menghitung ekspresi matematika yang kamu masukkan:</p>
+                            <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-mono text-sm font-bold">
+                                ${escapeHTML(q)} = ${evalResult}
+                            </div>
+                        `;
+                    }
+                } catch (err) { /* abaikan jika bukan ekspresi valid */ }
+            }
+
+            // 6. RESPON KONSEP MATERI UMUM (ALJABAR, DERET, STATISTIKA, DLL)
+            if (q.includes('kuadrat') || q.includes('aljabar')) {
+                return `
+                    <p class="font-bold text-indigo-700">Ringkasan Konsep Persamaan & Fungsi Kuadrat</p>
+                    <p>Bentuk umumnya adalah <strong>ax² + bx + c = 0</strong>. Untuk mencari akar-akarnya (x₁ dan x₂), kamu bisa menggunakan 3 metode:</p>
+                    <ol class="list-decimal list-inside text-xs space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <li><strong>Pemfaktoran:</strong> Mengubah ke bentuk (x - x₁)(x - x₂) = 0.</li>
+                        <li><strong>Melengkapkan Kuadrat Sempurna:</strong> Mengubah ruas kiri menjadi (x + p)² = q.</li>
+                        <li><strong>Rumus ABC:</strong> x₁,₂ = [-b ± √(b² - 4ac)] / 2a.</li>
+                    </ol>
+                    <p class="text-xs text-indigo-600 font-semibold">💡 Coba ketikkan langsung soal persamaanmu (contoh: <code>x^2 - 7x + 12 = 0</code>) agar saya hitungkan otomatis!</p>
+                `;
+            }
+
+            // 7. FALLBACK TUTOR RAMAH
+            return `
+                <p>Pertanyaan yang bagus! Untuk mendapatkan jawaban otomatis langkah demi langkah dari sistem kalkulasi saya, kamu bisa menuliskan soal dengan format berikut:</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="font-bold text-indigo-700 block mb-0.5">1. Persamaan Kuadrat</span>
+                        Ketik: <code>x^2 + 5x + 6 = 0</code>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="font-bold text-purple-700 block mb-0.5">2. Turunan Fungsi</span>
+                        Ketik: <code>turunan dari 2x^3 + 5x^2 - 4x</code>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="font-bold text-blue-700 block mb-0.5">3. Deret Aritmatika</span>
+                        Ketik: <code>aritmatika a=3, b=5, n=10</code>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="font-bold text-emerald-700 block mb-0.5">4. Konsep Materi</span>
+                        Ketik: <code>sudut istimewa trigonometri</code>
+                    </div>
+                </div>
+            `;
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag]));
+        }
+
+        // --- 8. INISIALISASI SAAT HALAMAN DIMUAT ---
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMateriList('all');
+            updateDashboardStats();
+        });
+    </script>
+</body>
+</html>
